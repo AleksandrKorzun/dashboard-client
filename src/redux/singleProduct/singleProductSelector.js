@@ -1,0 +1,1 @@
+export const getOneProductSelector = (state) => state.singleProduct.singleProduct;
