@@ -21,16 +21,30 @@ import OverviewChart from "components/OverviewChart";
 import { useGetDashboardQuery } from "state/api";
 import StatBox from "components/StatBox";
 import ExpensesChart from "components/ExpensesChart";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getExpensesSelector } from "redux/expenses/expensesSelector";
 import { getOrdersSelector } from "redux/orders/ordersSelector";
+import { useEffect } from "react";
+import { getOrdersOperation } from "redux/orders/ordersOperation";
+import { getExpensesOperation } from "redux/expenses/expensesOperation";
+import { getCategoryOperation } from "redux/category/categoryOperation";
+import { getCategorySelector } from "redux/category/categorySelectors";
 
 const Dashboard = () => {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(getOrdersOperation());
+    dispatch(getExpensesOperation());
+    dispatch(getCategoryOperation());
+  }, []);
   const theme = useTheme();
   const isNonMediumScreens = useMediaQuery("(min-width: 1200px)");
   const { data, isLoading } = useGetDashboardQuery();
   const expenses = useSelector(getExpensesSelector);
   const dataOrder = useSelector(getOrdersSelector);
+  const dataCategory = useSelector(getCategorySelector);
+  console.log(dataCategory);
+  const totalSales = dataOrder.reduce((acc, { total }) => (acc += total), 0);
   const columnsOrder = [
     {
       field: "_id",
@@ -98,7 +112,11 @@ const Dashboard = () => {
         if (params.value === "success") {
           return "actionsSuccess";
         }
-        if (params.value === "cancel" || params.value === "return" || params.value === "guarantee") {
+        if (
+          params.value === "cancel" ||
+          params.value === "return" ||
+          params.value === "guarantee"
+        ) {
           return "actionsCancel";
         }
       },
@@ -175,8 +193,8 @@ const Dashboard = () => {
       >
         {/* ROW 1 */}
         <StatBox
-          title="Total Customers"
-          value={data && data.totalCustomers}
+          title="Total Sales"
+          value={totalSales}
           increase="+14%"
           description="Since last month"
           icon={
@@ -185,18 +203,25 @@ const Dashboard = () => {
             />
           }
         />
-        <StatBox
-          title="Sales Today"
-          value={data && data.todayStats.totalSales}
-          increase="+21%"
-          description="Since last month"
-          icon={
-            <PointOfSale
-              sx={{ color: theme.palette.secondary[300], fontSize: "26px" }}
+        {dataCategory &&
+          dataCategory.map(({name, soldAllProducts}) => {
+            const percent = soldAllProducts * 100 / totalSales;
+            console.log(soldAllProducts);
+            return (
+            <StatBox
+              title={name}
+              value={soldAllProducts}
+              increase={`${percent.toFixed()}%`}
+              description="Since last month"
+              icon={
+                <PointOfSale
+                  sx={{ color: theme.palette.secondary[300], fontSize: "26px" }}
+                />
+              }
             />
-          }
-        />
-        <Box
+          )})}
+
+        {/* <Box
           gridColumn="span 8"
           gridRow="span 2"
           backgroundColor={theme.palette.background.alt}
@@ -204,8 +229,8 @@ const Dashboard = () => {
           borderRadius="0.55rem"
         >
           <OverviewChart view="sales" isDashboard={true} />
-        </Box>
-        <StatBox
+        </Box> */}
+        {/* <StatBox
           title="Monthly Sales"
           value={data && data.thisMonthStats.totalSales}
           increase="+5%"
@@ -226,7 +251,7 @@ const Dashboard = () => {
               sx={{ color: theme.palette.secondary[300], fontSize: "26px" }}
             />
           }
-        />
+        /> */}
 
         {/* ROW 2 */}
         <Box
@@ -275,7 +300,7 @@ const Dashboard = () => {
           <Typography variant="h6" sx={{ color: theme.palette.secondary[100] }}>
             Expense By Category
           </Typography>
-          <ExpensesChart isDashboard={true} data={expenses} view={"expenses"}/>
+          <ExpensesChart isDashboard={true} data={expenses} view={"expenses"} />
           <Typography
             p="0 0.6rem"
             fontSize="0.8rem"

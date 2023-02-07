@@ -25,7 +25,6 @@ const ExpensesChart = ({ isDashboard = false, view, data }) => {
   }, 0);
   const formatData = data.reduce((acc, expenses) => {
     const sameReason = acc.filter((item) => item.reason === expenses.reason);
-    console.log('sameReason', sameReason)
     if (!sameReason.length) {
       acc.push(expenses);
     } else {

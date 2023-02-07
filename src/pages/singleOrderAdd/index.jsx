@@ -25,11 +25,14 @@ const SingleOrderAdd = () => {
     const newTotalProducts =
       parseInt(currentCategory.quantityAllProducts) - parseInt(state.quantity);
     const newTotalStock =
-      currentCategory.stockAllProducts + state.quantity * state.price;
+      currentCategory.stockAllProducts - state.quantity * state.price;
+      const sales = currentCategory.soldAllProducts + state.quantity * state.price
+      console.log(sales.toFixed());
     dispatch(
       updateCategoryOperation(currentCategory._id, {
         quantityAllProducts: newTotalProducts,
         stockAllProducts: newTotalStock,
+        soldAllProducts: sales,
       })
     );
   }

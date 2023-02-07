@@ -10,9 +10,6 @@ const CategoryCard = ({_id, name, description, photo, quantityAllProducts, soldA
     const theme = useTheme();
     const dispatch = useDispatch();
   
-    const openCategory = () => {
-      dispatch(getCategoryByIdOperation(_id))
-    };
     return (
       <Card
         sx={{
