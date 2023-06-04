@@ -95,13 +95,13 @@ const Navbar = ({ user, setIsSidebarOpen, isSidebarOpen }) => {
                   fontSize="0.85rem"
                   sx={{ color: theme.palette.secondary[100] }}
                 >
-                  {user.name}
+                  Oleksandr Korzun
                 </Typography>
                 <Typography
                   fontSize="0.75rem"
                   sx={{ color: theme.palette.secondary[200] }}
                 >
-                  {user.occupation}
+                  Manager
                 </Typography>
               </Box>
               <ArrowDropDownOutlined
